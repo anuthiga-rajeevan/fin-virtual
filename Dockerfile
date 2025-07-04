@@ -22,7 +22,7 @@
     COPY backend/ ./backend
     COPY --from=frontend /app/frontend/.next ./frontend/.next
     COPY --from=frontend /app/frontend/public ./frontend/public
-    COPY --from=frontend /app/frontend/next.config.js ./frontend/next.config.js
+    COPY --from=frontend /app/frontend/next.config.ts ./frontend/next.config.ts
     COPY --from=frontend /app/frontend/package.json ./frontend/package.json
     
     # Set env
@@ -31,5 +31,5 @@
     
     EXPOSE 4000
     
-    CMD ["node", "backend/src/index.js"]
+    CMD ["node", "backend/src/index.ts"]
     

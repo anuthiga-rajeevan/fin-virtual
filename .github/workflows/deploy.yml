@@ -1,0 +1,19 @@
+name: Deploy Halocard to Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Optional: Add test, lint, or docker build/test here
+
+      - name: Trigger Deploy on Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
