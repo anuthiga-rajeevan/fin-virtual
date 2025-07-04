@@ -14,12 +14,16 @@
     
     WORKDIR /app
     
+    
     # Copy backend files
     COPY backend/package*.json ./backend/
     RUN cd backend && npm install
     
     # Copy backend and frontend build output
     COPY backend/ ./backend
+    # Compile TS → JS
+    RUN cd backend && npm run build
+
     COPY --from=frontend /app/frontend/.next ./frontend/.next
     COPY --from=frontend /app/frontend/public ./frontend/public
     COPY --from=frontend /app/frontend/next.config.ts ./frontend/next.config.ts
@@ -31,5 +35,5 @@
     
     EXPOSE 4000
     
-    CMD ["node", "backend/src/index.ts"]
+    CMD ["node", "backend/dist/index.js"]
     
