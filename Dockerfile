@@ -17,6 +17,9 @@ COPY . .
 # Build frontend (static export)
 RUN cd frontend && npm run build
 
+# Move frontend static files to a common directory (e.g., ./public)
+RUN mkdir -p ./public && cp -r ./frontend/out/* ./public/
+
 # Build backend (transpile TypeScript)
 RUN cd backend && npm run build
 
