@@ -5,16 +5,20 @@ import path from 'path';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
-// Middleware
-app.use(express.json());
+// Serve static files from exported Next.js frontend
+app.use(express.static(path.join(__dirname, '../../frontend/out')));
 
-app.use(express.static(path.join(__dirname, '../../frontend/.next')));
+// API health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../frontend/.next/server/pages/index.html'));
-// });
+// All other routes => frontend app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/out/index.html'));
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

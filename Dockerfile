@@ -1,39 +1,25 @@
-# ---- Build Frontend ----
-    FROM node:18-alpine AS frontend
+# Base image
+FROM node:18-alpine
 
-    WORKDIR /app/frontend
-    
-    COPY frontend/package*.json ./
-    RUN npm install
-    
-    COPY frontend/ .
-    RUN npm run build
-    
-    # ---- Build Backend ----
-    FROM node:18-alpine AS backend
-    
-    WORKDIR /app
-    
-    
-    # Copy backend files
-    COPY backend/package*.json ./backend/
-    RUN cd backend && npm install
-    
-    # Copy backend and frontend build output
-    COPY backend/ ./backend
-    # Compile TS → JS
-    RUN cd backend && npm run build
+WORKDIR /app
 
-    COPY --from=frontend /app/frontend/.next ./frontend/.next
-    COPY --from=frontend /app/frontend/public ./frontend/public
-    COPY --from=frontend /app/frontend/next.config.ts ./frontend/next.config.ts
-    COPY --from=frontend /app/frontend/package.json ./frontend/package.json
-    
-    # Set env
-    ENV NODE_ENV=production
-    ENV PORT=4000
-    
-    EXPOSE 4000
-    
-    CMD ["node", "backend/dist/index.js"]
-    
+# Install backend dependencies
+COPY backend/package*.json ./backend/
+RUN cd backend && npm install
+
+# Install frontend dependencies and build it
+COPY frontend/package*.json ./frontend/
+RUN cd frontend && npm install
+
+# Copy full source
+COPY . .
+
+# Build frontend (static export)
+RUN cd frontend && npm run build && npm run export
+
+# Build backend (transpile TypeScript)
+RUN cd backend && npm run build
+
+# Expose port and start backend (which serves FE)
+EXPOSE 4000
+CMD ["node", "backend/dist/index.js"]
