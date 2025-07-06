@@ -25,6 +25,9 @@ RUN echo "=== Searching for index.html ===" && find ./frontend -name index.html 
 # Move frontend static files to a common directory (e.g., ./public)
 RUN mkdir -p ./public && cp -r ./frontend/out/* ./public/
 
+# Debug: list contents of public directory
+RUN echo "=== Contents of /app/public ===" && ls -al ./public
+
 # Build backend (transpile TypeScript)
 RUN cd backend && npm run build
 
