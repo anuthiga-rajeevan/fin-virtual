@@ -15,7 +15,7 @@ RUN cd frontend && npm install
 COPY . .
 
 # Build frontend (static export)
-RUN cd frontend && npm run build && npm run export
+RUN cd frontend && npm run build
 
 # Build backend (transpile TypeScript)
 RUN cd backend && npm run build
