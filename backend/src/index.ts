@@ -25,10 +25,10 @@ const indexPath = path.join(publicDir, 'index.html');
 console.log('Serving frontend from:::::::::::::::', indexPath);
 if (fs.existsSync(indexPath)) {
   console.log('FILE EXISTS');
-  app.get('/*', (req, res) => {
-    console.log('Fallback route hit:', req.url);
+  app.get(/^\/(?!https?:\/\/).*/, (req, res) => {
     res.sendFile(indexPath);
   });
+  
 } else {
   console.warn('⚠️ index.html not found at:', indexPath);
 }
