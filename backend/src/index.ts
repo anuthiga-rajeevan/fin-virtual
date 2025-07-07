@@ -23,14 +23,15 @@ console.log('Serving frontend from:', publicDir);
 // ✅ Wildcard fallback for SPA routing (if needed)
 const indexPath = path.join(publicDir, 'index.html');
 console.log('Serving frontend from:::::::::::::::', indexPath);
-// if (fs.existsSync(indexPath)) {
-//   console.log('FILE EXISTS');
-//   app.get('*', (req, res) => {
-//     res.sendFile(indexPath);
-//   });
-// } else {
-//   console.warn('⚠️ index.html not found at:', indexPath);
-// }
+if (fs.existsSync(indexPath)) {
+  console.log('FILE EXISTS');
+  app.get('/*', (req, res) => {
+    console.log('Fallback route hit:', req.url);
+    res.sendFile(indexPath);
+  });
+} else {
+  console.warn('⚠️ index.html not found at:', indexPath);
+}
 
 app.listen(port, () => {
   console.log(`✅ Server running on http://localhost:${port}`);
