@@ -13,3 +13,72 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ActivityType {
+  SIGNUP
+  EMAIL_VERIFIED
+  LOGIN
+  PHONE_VERIFIED
+  OFAC_CHECKED
+  PROFILE_UPDATED
+}
+
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  isEmailVerified  Boolean  @default(false)
+  emailVerifiedAt  DateTime?  
+
+  phoneNumber      String?  
+  phoneCountryCode String?  
+  phoneCountry     String?  
+  isPhoneVerified  Boolean  @default(false)
+  phoneVerifiedAt  DateTime?
+
+  fullName         String?  
+  dateOfBirth      DateTime?  
+  ofacStatus       String?  // "clear", "flagged", etc.
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  emailVerifications EmailVerification[]
+  phoneVerifications PhoneVerification[]
+  activities       UserActivity[]
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  codeHash  String   // hashed 6-digit code
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model PhoneVerification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  codeHash  String   // hashed 6-digit code
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UserActivity {
+  id         String       @id @default(uuid())
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+
+  type       ActivityType
+  metadata   Json?
+  timestamp  DateTime     @default(now())
+
+  @@index([userId])
+  @@index([type])
+}
+
