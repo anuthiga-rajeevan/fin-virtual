@@ -17,20 +17,12 @@ COPY . .
 # Build frontend (static export)
 RUN cd frontend && npm run build
 
-# Debug: list contents of frontend and out directory
-RUN echo "=== Contents of /app/frontend ===" && ls -al ./frontend
-RUN echo "=== Contents of /app/frontend/out ===" && ls -al ./frontend/out || echo "frontend/out does not exist"
-RUN echo "=== Searching for index.html ===" && find ./frontend -name index.html || echo "index.html not found"
-
 # Move frontend static files to a common directory (e.g., ./public)
 RUN mkdir -p ./public && cp -r ./frontend/out/* ./public/
-
-# Debug: list contents of public directory
-RUN echo "=== Contents of /app/public ===" && ls -al ./public
 
 # Build backend (transpile TypeScript)
 RUN cd backend && npm run build
 
 # Expose port and start backend (which serves FE)
 EXPOSE 4000
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./backend/prisma/schema.prisma && node dist/main.js"]
