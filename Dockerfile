@@ -25,4 +25,4 @@ RUN cd backend && npm run build
 
 # Expose port and start backend (which serves FE)
 EXPOSE 4000
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./backend/prisma/schema.prisma && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./backend/prisma/schema.prisma && node backend/dist/main.js"]
